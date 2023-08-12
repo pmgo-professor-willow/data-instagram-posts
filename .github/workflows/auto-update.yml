@@ -28,6 +28,8 @@ jobs:
       - name: Installation
         run: |
           yarn install
+          mkdir -p artifacts
+          touch ./artifacts/.nojekyll
 
       - name: Generate JSON files by Puppeteer
         uses: mujo-code/puppeteer-headful@v2
@@ -35,10 +37,6 @@ jobs:
           CI: 'true'
         with:
           args: yarn start
-
-      - name: Touch .nojekyll
-        run: |
-          touch artifacts/.nojekyll
 
       - name: Commit files to gh-pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
