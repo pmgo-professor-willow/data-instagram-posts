@@ -10,9 +10,10 @@ import { download, hostUrl } from './utils';
 import IG_USERS from '../data/instagram-users.json';
 
 interface Post {
-  contentText: string;
-  timeText: string;
-  imageLinks: string[];
+  id: string;
+  text: string;
+  mediaList: { url: string }[];
+  createdAt: string;
 };
 
 const getPost = async (page: Page, url: string): Promise<Post> => {
@@ -23,26 +24,27 @@ const getPost = async (page: Page, url: string): Promise<Post> => {
   
   const xml = await page.evaluate(() => document.querySelector('*')?.outerHTML!);
   const root = parse(xml);
-  const contentText = root.querySelector('.single-photo-description')?.text ?? '';
-  const timeText = root.querySelector('.single-photo-time')?.text ?? '';
+  const text = root.querySelector('.single-photo-description')?.text ?? '';
+  const createdAt = root.querySelector('.single-photo-time')?.text ?? '';
   const rawImageLinks = root.querySelectorAll('.single-photo.owl-carousel .owl-item img, .single-photo img')
     .map((imageItem) => imageItem.getAttribute('src')!);
 
   // Download images
-  const imageLinks: string[] = [];
+  const mediaList: Post['mediaList'] = [];
   for (let i = 0; i < rawImageLinks.length; i++) {
-    const storageBaseUrl = 'https://raw.githubusercontent.com/pmgo-professor-willow/data-instagram-posts/gh-pages/';
+    const storageBaseUrl = 'https://pmgo-professor-willow.github.io/data-instagram-posts/';
     const filename = `${mediaId}_${i+1}.jpg`;
     const imagePath = `./artifacts/${filename}`;
-    imageLinks.push(new URL(filename, storageBaseUrl).href);
+    mediaList.push({ url: new URL(filename, storageBaseUrl).href });
 
     await download(rawImageLinks[i], imagePath);
   }
 
   return {
-    contentText,
-    timeText,
-    imageLinks,
+    id: mediaId,
+    text,
+    mediaList,
+    createdAt,
   };
 };
 
