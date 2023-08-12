@@ -36,6 +36,10 @@ jobs:
         with:
           args: yarn start
 
+      - name: Touch .nojekyll
+        run: |
+          touch artifacts/.nojekyll
+
       - name: Commit files to gh-pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
