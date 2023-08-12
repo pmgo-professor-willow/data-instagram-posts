@@ -10,13 +10,6 @@ on:
 jobs:
   build:
     name: Auto-update master data
-    env:
-      MY_SECRET: ${{ secrets.commit_secret }}
-      BEARER_TOKEN: ${{ secrets.bearer_token }}
-      USER_NAME: githubaction
-      USER_EMAIL: githubaction@fake.com
-      PUBLISH_DIR: artifacts
-      GH_PAGES_BRANCH: gh-pages
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,27 +21,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          args: install
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
 
       - name: Installation
         run: |
           yarn install
 
-      - name: Generate JSON files
-        run: |
-          yarn start
+      - name: Generate JSON files by Puppeteer
+        uses: mujo-code/puppeteer-headful@v2
+        env:
+          CI: 'true'
+        with:
+          args: yarn start
 
-      - name: Commit files to gh-pages
-        run: |
-          cd $PUBLISH_DIR
-          touch .nojekyll
-
-          git init
-          git config --local user.name $USER_NAME
-          git config --local user.email $USER_EMAIL
-          git status
-          git remote add origin https://$MY_SECRET@github.com/$GITHUB_REPOSITORY.git
-          git checkout -b $GH_PAGES_BRANCH
-          git add --all
-          git commit -m "deploy to GitHub pages"
-          git push origin $GH_PAGES_BRANCH -f
-          echo 🤘 deploy $GH_PAGES_BRANCH complete.
+      - name: Commit files to gh-pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: artifacts
+          branch: gh-pages
