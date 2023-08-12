@@ -14,7 +14,9 @@
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
     "node-html-parser": "^6.1.5",
-    "puppeteer": "^21.0.3"
+    "puppeteer": "^21.0.3",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.5",
