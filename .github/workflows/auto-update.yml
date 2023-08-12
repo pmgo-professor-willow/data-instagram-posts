@@ -1,15 +1,13 @@
-name: auto update
+name: auto update (test)
 
 on:
   push:
     branches:
-      - main
-  schedule:
-    - cron: '0,30 * * * *'
+      - test
 
 jobs:
   build:
-    name: Auto-update master data
+    name: Auto-update master data (test)
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,4 +38,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: artifacts
-          branch: gh-pages
+          branch: gh-pages-test

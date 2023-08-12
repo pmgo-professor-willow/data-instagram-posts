@@ -1,8 +1,10 @@
 // Node modules.
 import _ from 'lodash';
 import { parse } from 'node-html-parser';
-import puppeteer, { Page } from 'puppeteer';
+import { Page } from 'puppeteer';
 import { mkdirp, writeFile } from 'fs-extra';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 // Local modules.
 import { hostUrl } from './utils';
 import IG_USERS from '../data/instagram-users.json';
@@ -54,6 +56,8 @@ const getPosts = async (page: Page, userId: string): Promise<Post[]> => {
   await page.goto(url, { waitUntil: 'networkidle0' });
   const xml = await page.evaluate(() => document.querySelector('*')?.outerHTML!);
 
+  console.log(xml);
+
   const root = parse(xml);
   const linkItems = root.querySelectorAll('article > div > div > div > div > a');
 
@@ -76,7 +80,7 @@ const main = async () => {
   const outputPath = './artifacts';
   await mkdirp(outputPath);
 
-  const browser = await puppeteer.launch({
+  const browser = await puppeteer.use(StealthPlugin()).launch({
     args: ['--no-sandbox'],
     executablePath: process.env.PUPPETEER_EXEC_PATH, // set by docker container
     headless: false,
