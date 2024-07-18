@@ -6,7 +6,7 @@ import { parse } from 'node-html-parser';
 import { mkdirp, writeFile } from 'fs-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 // Local modules.
-import { download, hostUrl } from './utils';
+import { downloadImage, hostUrl } from './utils';
 import IG_USERS from '../data/instagram-users.json';
 
 interface Post {
@@ -37,7 +37,7 @@ const getPost = async (page: Page, url: string): Promise<Post> => {
     const imagePath = `./artifacts/${filename}`;
     mediaList.push({ url: new URL(filename, storageBaseUrl).href });
 
-    await download(rawImageLinks[i], imagePath);
+    await downloadImage(rawImageLinks[i], imagePath);
   }
 
   return {
